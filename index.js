@@ -1,51 +1,63 @@
-{/* 문서 스무스 스크롤 */}
+/* =========================
+   Lenis (스무스 스크롤)
+========================= */
 const lenis = new Lenis({
     duration: 2.2,
     smoothWheel: true
 });
 
+// Lenis RAF (중복 제거 버전)
 function raf(time) {
     lenis.raf(time);
     requestAnimationFrame(raf);
 }
-
 requestAnimationFrame(raf);
 
-
-{/* 시차스크롤 */}
+// ScrollTrigger와 동기화
 lenis.on('scroll', ScrollTrigger.update);
 
-gsap.ticker.add((time)=>{
-    lenis.raf(time * 1000);
-});
-
+// GSAP ticker 충돌 방지
 gsap.ticker.lagSmoothing(0);
 
-//=========================================
+
+/* =========================
+   ScrollTrigger Refresh (필수)
+========================= */
+window.addEventListener("load", () => {
+    ScrollTrigger.refresh();
+});
+
+
+/* =========================
+   시차스크롤 (video pin)
+========================= */
 const mm = gsap.matchMedia();
 
 mm.add("(min-width: 1025px)", () => {
 
-// 기존 gsap.to(".video", { ... }) 코드 자리에 이 코드를 넣어주세요.
     gsap.to(".video", {
-        top: 0,             // 🚨 스크롤 내릴 때 상단 여백 없애기
-        right: 0,           // 🚨 스크롤 내릴 때 우측 여백 없애기
-        width: "100vw",     // 화면 전체 가로폭으로 확장
-        height: "100vh",    // 화면 전체 세로높이로 확장
-        borderRadius: "0px",// 둥근 테두리 해제
+        top: 0,
+        right: 0,
+        width: "100vw",
+        height: "100vh",
+        borderRadius: "0px",
         ease: "none",
         scrollTrigger: {
-            trigger: ".video_wrap", // 부모인 .video_wrap이 탑에 닿으면 시작
-            start: "top top",            
-            end: "+=240",          // 1500px만큼 스크롤하는 동안 애니메이션 진행
-            scrub: true,            
-            pin: true,              // 화면 고정
-            pinSpacing: true,       
+            trigger: ".video_wrap",
+            start: "top top",
+            end: "+=240",
+            scrub: true,
+            pin: true,
+            pinSpacing: true,
             invalidateOnRefresh: true
         }
     });
 });
 
+
+/* =========================
+   NAV 애니메이션
+========================= */
 gsap.fromTo(
     ".nav",
     {
@@ -62,20 +74,20 @@ gsap.fromTo(
 
 const nav = document.querySelector(".nav");
 
-ScrollTrigger.create({
-    start: 0,
-    end: "max",
-    onUpdate: (self) => {
-        if (self.scroll() > 0) {
-            nav.classList.add("active");
-        } else {
-            nav.classList.remove("active");
-        }
+window.addEventListener("scroll", () => {
+    if (window.scrollY > 50) {
+        nav.classList.add("scrolled");
+    } else  {
+        nav.classList.remove("scrolled");
     }
 });
 
+
+/* =========================
+   VIDEO TEXT 애니메이션
+========================= */
 gsap.fromTo(
-    ".video_text> p",
+    ".video_text > p",
     {
         y: 20,
         opacity: 0
@@ -102,15 +114,18 @@ gsap.fromTo(
 );
 
 
+/* =========================
+   SECTION 1
+========================= */
 gsap.to(".section1 .s1_title", {
     opacity: 1,
     y: 0,
     duration: 1,
-    stagger: 0.4, // 클래스가 붙은 요소들만 순서대로 올라옴
+    stagger: 0.4,
     scrollTrigger: {
         trigger: ".section1",
-        start: () => window.innerWidth <= 980 
-            ? "top 80%" 
+        start: () => window.innerWidth <= 980
+            ? "top 80%"
             : window.innerWidth <= 1024 ? "top 65%" : "top 50%",
         toggleActions: "play none none reverse"
     }
@@ -120,20 +135,23 @@ gsap.to(".s1_list .s1_item", {
     opacity: 1,
     y: 0,
     duration: 0.6,
-    stagger: 0.2, // 클래스가 붙은 요소들만 순서대로 올라옴
+    stagger: 0.2,
     scrollTrigger: {
-        start: () => window.innerWidth <= 980 
-            ? "top -10%" 
-            : window.innerWidth <= 1024 ? "top 65%" : "top 50%",
+        trigger: ".s1_list",
+        start: "top 80%",
         toggleActions: "play none none reverse"
     }
 });
 
+
+/* =========================
+   SECTION 2
+========================= */
 gsap.to(".section2 .s2_item", {
     opacity: 1,
     y: 0,
     duration: 0.6,
-    stagger: 0.2, // 클래스가 붙은 요소들만 순서대로 올라옴
+    stagger: 0.2,
     scrollTrigger: {
         trigger: ".section2",
         start: () => window.innerWidth <= 1024 ? "top 65%" : "top 50%",
@@ -141,36 +159,32 @@ gsap.to(".section2 .s2_item", {
     }
 });
 
-window.addEventListener('scroll', () => {
-  const element = document.querySelector('.s2_circle');
-  if (!element) return; // 요소가 없으면 에러 방지
 
-  // 요소의 상단 위치가 '화면 전체 높이의 80%' 지점보다 위로 올라왔는지 체크
-  const triggerPoint = window.innerHeight * 0.8;
-  const elementTop = element.getBoundingClientRect().top;
+/* =========================
+   CIRCLE ACTIVE (Lenis 대응)
+========================= */
+lenis.on('scroll', () => {
 
-  if (elementTop < triggerPoint) {
-    element.classList.add('active');
-  } else {
-    element.classList.remove('active'); // 다시 위로 올리면 원상복구 (원치 않으면 제거)
-  }
+    const el2 = document.querySelector('.s2_circle');
+    const el3 = document.querySelector('.s3_circle');
+
+    const triggerPoint = window.innerHeight * 0.8;
+
+    if (el2) {
+        const top2 = el2.getBoundingClientRect().top;
+        el2.classList.toggle("active", top2 < triggerPoint);
+    }
+
+    if (el3) {
+        const top3 = el3.getBoundingClientRect().top;
+        el3.classList.toggle("active", top3 < triggerPoint);
+    }
 });
 
-window.addEventListener('scroll', () => {
-  const element = document.querySelector('.s3_circle');
-  if (!element) return; // 요소가 없으면 에러 방지
 
-  // 요소의 상단 위치가 '화면 전체 높이의 80%' 지점보다 위로 올라왔는지 체크
-  const triggerPoint = window.innerHeight * 0.8;
-  const elementTop = element.getBoundingClientRect().top;
-
-  if (elementTop < triggerPoint) {
-    element.classList.add('active');
-  } else {
-    element.classList.remove('active'); // 다시 위로 올리면 원상복구 (원치 않으면 제거)
-  }
-});
-
+/* =========================
+   BURGER MENU
+========================= */
 const burgerBtn = document.querySelector('.nav_980px_top > button');
 const navBurger = document.querySelector('.nav_burger');
 
@@ -178,6 +192,7 @@ burgerBtn.addEventListener('click', () => {
     burgerBtn.classList.toggle('active');
     navBurger.classList.toggle('active');
 });
+
 
 gsap.fromTo(
     ".nav_burger",

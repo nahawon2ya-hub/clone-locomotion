@@ -16,10 +16,12 @@ body{margin: 0;}
     border-radius: 5px;
     overflow: hidden;
     z-index: 999;
+    transition: 0.3s ease;
 
-    &.active{
+    &.scrolled {
 
         height: 60px;
+        transition: 0.3s ease;
         
         .nav_bottom{
             opacity: 0;

@@ -21,20 +21,22 @@ body {
   border-radius: 5px;
   overflow: hidden;
   z-index: 999;
+  transition: 0.3s ease;
 }
-.nav.active {
+.nav.scrolled {
   height: 60px;
+  transition: 0.3s ease;
 }
-.nav.active .nav_bottom {
+.nav.scrolled .nav_bottom {
   opacity: 0;
   visibility: hidden;
   transition: 0.3s;
   max-height: 0;
 }
-.nav.active:hover {
+.nav.scrolled:hover {
   height: 120px;
 }
-.nav.active:hover .nav_bottom {
+.nav.scrolled:hover .nav_bottom {
   opacity: 1;
   visibility: visible;
   transition: 0.3s;
