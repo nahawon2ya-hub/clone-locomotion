@@ -58,19 +58,12 @@ mm.add("(min-width: 1025px)", () => {
 /* =========================
    NAV 애니메이션
 ========================= */
-gsap.fromTo(
-    ".nav",
-    {
-        y: -300,
-        opacity: 0
-    },
-    {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "none"
-    }
-);
+gsap.to(".nav", {
+    y: 0,
+    opacity: 1,
+    duration: 0.6,
+    ease: "power2.out"
+});
 
 const nav = document.querySelector(".nav");
 

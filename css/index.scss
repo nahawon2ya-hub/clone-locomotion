@@ -18,6 +18,9 @@ body{margin: 0;}
     z-index: 999;
     transition: 0.3s ease;
 
+    transform: translateY(-120%);
+    opacity: 0;
+
     &.scrolled {
 
         height: 60px;
